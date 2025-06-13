@@ -1,0 +1,29 @@
+{
+  "name": "sentinel-fire-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@react-navigation/native": "^7.1.10",
+    "@react-navigation/native-stack": "^7.3.14",
+    "expo": "^53.0.11",
+    "expo-location": "^18.1.5",
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-maps": "^1.24.3",
+    "react-native-reanimated": "^3.18.0",
+    "react-native-safe-area-context": "^5.4.1",
+    "react-native-screens": "^4.11.1"
+  },
+  "devDependencies": {
+    "@tsconfig/react-native": "^3.0.5",
+    "@types/react": "^19.1.7",
+    "@types/react-native": "^0.72.8",
+    "typescript": "^5.8.3"
+  }
+}
