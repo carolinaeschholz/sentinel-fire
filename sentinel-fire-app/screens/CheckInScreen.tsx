@@ -59,7 +59,7 @@ export default function CheckInScreen() {
     setCheckInData(data);
 
     Alert.alert('Check-In submitted', 'Thank you for checking in!');
-    navigation.goBack();
+    navigation.navigate('CheckInConfirmation');
   };
 
   // Renderização da tela
