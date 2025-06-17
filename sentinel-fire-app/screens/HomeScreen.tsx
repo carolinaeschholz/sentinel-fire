@@ -1,81 +1,114 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../navigation';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import colors from '../constants/colors';
+import { useRiskContext } from '../context/RiskContext';
+import RiskAlertCard from '../components/RiskAlertCard';
+import { RootStackParamList } from '../navigation/RootNavigator';
 
 export default function HomeScreen() {
-  // Hook para navegação entre telas
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { riskLevel, setRiskLevel } = useRiskContext();
+
+  // ⚠️ TESTE TEMPORÁRIO: força o nível de risco para mostrar botão de evacuação
+  useEffect(() => {
+    setRiskLevel('alto'); // ou 'medio'
+  }, []);
+
+  const getAlertMessage = () => {
+    switch (riskLevel) {
+      case 'alto':
+        return 'Alto risco de incêndio. Consulte rotas de evacuação.';
+      case 'medio':
+        return 'Risco moderado. Recomendamos revisar rotas.';
+      case 'baixo':
+        return 'Baixo risco. Fique atento a atualizações.';
+      case 'sem_risco':
+      default:
+        return 'Nenhum risco detectado no momento.';
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      {/* Título de alerta */}
-      <Text style={styles.title}>🔥 Fire Risk Alert</Text>
+    <SafeAreaView style={styles.container}>
+      <RiskAlertCard message={getAlertMessage()} />
 
-      {/* Mensagem de alerta sobre risco de incêndio */}
-      <Text style={styles.alertText}>
-        High fire risk detected in your area. Stay alert and be ready to evacuate if necessary.
-      </Text>
-
-      {/* Botão para acessar o check-in comunitário */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('CheckIn')}
       >
-        <Text style={styles.buttonText}>Community Check-In</Text>
+        <Ionicons
+          name="checkmark-circle-outline"
+          size={20}
+          color={colors.primary}
+          style={styles.buttonIcon}
+        />
+        <Text style={styles.buttonText}>Check-In Comunitário</Text>
       </TouchableOpacity>
 
-      {/* Botão para visualizar o mapa de risco */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('RiskMap')}
       >
-        <Text style={styles.buttonText}>View Risk Map</Text>
+        <Ionicons
+          name="map-outline"
+          size={20}
+          color={colors.primary}
+          style={styles.buttonIcon}
+        />
+        <Text style={styles.buttonText}>Ver Mapa de Risco</Text>
       </TouchableOpacity>
 
-      {/* Botão para acessar rotas de evacuação */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Evacuation')}
-      >
-        <Text style={styles.buttonText}>Evacuation Routes</Text>
-      </TouchableOpacity>
-    </View>
+      {(riskLevel === 'alto' || riskLevel === 'medio') && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Evacuation')}
+        >
+          <Ionicons
+            name="exit-outline"
+            size={20}
+            color={colors.primary}
+            style={styles.buttonIcon}
+          />
+          <Text style={styles.buttonText}>Rotas de Evacuação</Text>
+        </TouchableOpacity>
+      )}
+
+      <Text style={styles.footer}>Última atualização: há 2 minutos</Text>
+    </SafeAreaView>
   );
 }
 
-// Estilos da tela
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    padding: 24,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: colors.alert,
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  alertText: {
-    fontSize: 16,
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: 32,
+    padding: 20,
   },
   button: {
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
+    flexDirection: 'row',
     alignItems: 'center',
+    borderColor: colors.primary,
+    borderWidth: 1.5,
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 16,
   },
+  buttonIcon: {
+    marginRight: 12,
+  },
   buttonText: {
-    color: colors.buttonText,
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '600',
+  },
+  footer: {
+    textAlign: 'center',
+    color: '#666',
+    fontSize: 12,
+    marginTop: 20,
   },
 });

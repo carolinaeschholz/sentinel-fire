@@ -7,11 +7,19 @@
     "jsx": "react-native",
     "strict": true,
     "noEmit": true,
-    "allowJs": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@screens/*": ["screens/*"],
+      "@context/*": ["context/*"],
+      "@services/*": ["services/*"],
+      "@constants/*": ["constants/*"],
+      "@utils/*": ["utils/*"]
+    }
   },
   "exclude": [
     "node_modules",
@@ -19,4 +27,6 @@
     "metro.config.js",
     "jest.config.js"
   ]
-} 
+}
+
+

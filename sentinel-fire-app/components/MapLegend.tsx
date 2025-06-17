@@ -1,30 +1,43 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import colors from '../constants/colors';
 
 export default function MapLegend() {
   return (
-    <View style={styles.container}>
-      <View style={[styles.swatch, { backgroundColor: 'rgba(192, 57, 43, 0.4)' }]} />
-      <Text style={styles.label}>High Risk Zone</Text>
+    <View style={styles.legendContainer}>
+      <View style={styles.legendItem}>
+        <View style={[styles.circle, { backgroundColor: '#C0392B' }]} />
+        <Text style={styles.text}>Alto</Text>
+      </View>
+      <View style={styles.legendItem}>
+        <View style={[styles.circle, { backgroundColor: '#E67E22' }]} />
+        <Text style={styles.text}>Médio</Text>
+      </View>
+      <View style={styles.legendItem}>
+        <View style={[styles.circle, { backgroundColor: '#F1C40F' }]} />
+        <Text style={styles.text}>Baixo</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  legendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 16,
+  },
+  legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  swatch: {
-    width: 16,
-    height: 16,
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: colors.alert,
+  circle: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 6,
   },
-  label: {
-    color: colors.text,
+  text: {
     fontSize: 14,
+    color: '#333',
   },
 });

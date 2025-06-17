@@ -1,67 +1,86 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  SafeAreaView,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { CheckInContext } from '../context/CheckInContext';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/RootNavigator';
+
 import colors from '../constants/colors';
+import messages from '../constants/messages';
+import { routes } from '../constants/routes';
+import RiskAlertCard from '../components/RiskAlertCard';
+import CheckInButton from '../components/CheckInButton';
+import { CheckInContext } from '../context/CheckInContext';
 
-// Tela de confirmação do check-in
+const getAgeGroupLabel = (group: 'child' | 'adult' | 'elderly') => {
+  switch (group) {
+    case 'child':
+      return 'Criança';
+    case 'adult':
+      return 'Adulto';
+    case 'elderly':
+      return 'Idoso';
+    default:
+      return '';
+  }
+};
+
 export default function CheckInConfirmationScreen() {
-  const navigation = useNavigation(); // Hook para navegação entre telas
-  const { data } = useContext(CheckInContext); // Obtém os dados do check-in do contexto
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { data } = useContext(CheckInContext);
 
-  // Se não houver dados de check-in, exibe uma mensagem
   if (!data) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.message}>No check-in data found.</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.message}>Nenhum dado de check-in encontrado.</Text>
+      </SafeAreaView>
     );
   }
 
-  // Função chamada ao confirmar o check-in
   const handleConfirm = () => {
-    // Aqui você pode integrar com o checkInService futuramente
-    Alert.alert('Check-In Enviado', 'Seus dados foram registrados com sucesso.');
-    navigation.navigate('Home'); // Volta para a tela inicial
+    Alert.alert('Check-In Enviado', messages.successCheckIn);
+    navigation.navigate(routes.HOME);
   };
 
-  // Renderiza os dados do check-in para confirmação
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Confirm Your Check-In</Text>
+    <SafeAreaView style={styles.container}>
+      <RiskAlertCard message="Confirme seu check-in e envie sua localização com os dados do grupo." />
 
-      <Text style={styles.label}>Location:</Text>
+      <Text style={styles.title}>Confirme seu Check-In</Text>
+
+      <Text style={styles.label}>Localização:</Text>
       <Text style={styles.text}>
         Latitude: {data.location.latitude.toFixed(4)}
         {'\n'}
         Longitude: {data.location.longitude.toFixed(4)}
       </Text>
 
-      <Text style={styles.label}>People with you:</Text>
+      <Text style={styles.label}>Pessoas com você:</Text>
       {data.companions.length === 0 ? (
-        <Text style={styles.text}>No one added.</Text>
+        <Text style={styles.text}>{messages.noCompanions}</Text>
       ) : (
         data.companions.map((person, i) => (
           <Text key={i} style={styles.text}>
-            - {person.name} ({person.ageGroup})
+            - {person.name} ({getAgeGroupLabel(person.ageGroup)})
           </Text>
         ))
       )}
 
-      <TouchableOpacity style={styles.button} onPress={handleConfirm}>
-        <Text style={styles.buttonText}>Confirm & Send</Text>
-      </TouchableOpacity>
-    </View>
+      <CheckInButton title="Confirmar e Enviar" onPress={handleConfirm} />
+    </SafeAreaView>
   );
 }
 
-// Estilos da tela
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    padding: 24,
-    justifyContent: 'center',
+    padding: 20,
   },
   title: {
     fontSize: 24,
@@ -86,16 +105,5 @@ const styles = StyleSheet.create({
     color: '#999',
     textAlign: 'center',
   },
-  button: {
-    backgroundColor: colors.button,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 32,
-  },
-  buttonText: {
-    color: colors.buttonText,
-    fontSize: 16,
-    fontWeight: '600',
-  },
 });
+

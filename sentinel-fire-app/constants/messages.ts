@@ -1,4 +1,6 @@
 export default {
-  checkInSuccess: 'Check-in sent successfully.',
-  errorGeneric: 'Something went wrong. Please try again later.'
+  noCompanions: 'Nenhum acompanhante registrado.',
+  noCheckInData: 'Nenhum dado de check-in disponível.',
+  confirmAlert: 'Revise os dados antes de enviar.',
+  successCheckIn: 'Check-in enviado com sucesso.',
 };

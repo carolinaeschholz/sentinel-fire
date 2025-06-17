@@ -9,26 +9,42 @@ import {
   FlatList,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import colors from '../constants/colors';
+import messages from '../constants/messages';
+import CheckInButton from '../components/CheckInButton';
+
 import { getCurrentLocation } from '../services/locationService';
 import { CheckInContext, Companion } from '../context/CheckInContext';
+import { RootStackParamList } from '../navigation/RootNavigator';
 
-// Define os grupos de idade possíveis
 const ageGroups = ['child', 'adult', 'elderly'] as const;
 
-export default function CheckInScreen() {
-  const navigation = useNavigation(); // Hook para navegação
-  const { setCheckInData } = useContext(CheckInContext); // Função para atualizar o contexto
+const getAgeGroupLabel = (group: typeof ageGroups[number]) => {
+  switch (group) {
+    case 'child':
+      return 'Criança';
+    case 'adult':
+      return 'Adulto';
+    case 'elderly':
+      return 'Idoso';
+    default:
+      return '';
+  }
+};
 
-  // Estado para armazenar acompanhantes, nome e grupo de idade selecionado
+export default function CheckInScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { setCheckInData } = useContext(CheckInContext);
+
   const [companions, setCompanions] = useState<Companion[]>([]);
   const [name, setName] = useState('');
   const [ageGroup, setAgeGroup] = useState<'child' | 'adult' | 'elderly'>('adult');
 
-  // Adiciona um acompanhante à lista
   const handleAddCompanion = () => {
     if (!name.trim()) {
-      Alert.alert('Missing name', 'Please enter a name.');
+      Alert.alert('Nome ausente', 'Por favor, preencha o nome.');
       return;
     }
 
@@ -36,50 +52,48 @@ export default function CheckInScreen() {
     setName('');
   };
 
-  // Remove um acompanhante da lista pelo índice
   const handleRemove = (index: number) => {
     setCompanions(companions.filter((_, i) => i !== index));
   };
 
-  // Envia o check-in, obtendo localização e salvando no contexto
   const handleSubmit = async () => {
-    const location = await getCurrentLocation();
-    if (!location) {
-      Alert.alert('Location error', 'Unable to get current location.');
-      return;
+    try {
+      const location = await getCurrentLocation();
+      if (!location) {
+        Alert.alert('Erro de localização', 'Não foi possível obter sua posição.');
+        return;
+      }
+
+      const data = {
+        timestamp: new Date().toISOString(),
+        location,
+        mainUser: { isSafe: true },
+        companions,
+      };
+
+      setCheckInData(data);
+      navigation.navigate('CheckInConfirmation');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Não foi possível enviar o check-in. Tente novamente.');
     }
-
-    const data = {
-      timestamp: new Date().toISOString(),
-      location,
-      mainUser: { isSafe: true },
-      companions,
-    };
-
-    setCheckInData(data);
-
-    Alert.alert('Check-In submitted', 'Thank you for checking in!');
-    navigation.navigate('CheckInConfirmationScreen');
   };
 
-  // Renderização da tela
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Community Check-In</Text>
-      <Text style={styles.message}>Enter info about people with you:</Text>
+      <Text style={styles.title}>Check-In da Comunidade</Text>
+      <Text style={styles.message}>Adicione informações das pessoas com você:</Text>
 
-      {/* Campo para nome do acompanhante */}
       <TextInput
         style={styles.input}
-        placeholder="Name"
+        placeholder="Nome"
         value={name}
         onChangeText={setName}
         placeholderTextColor="#999"
       />
 
-      {/* Botões para selecionar grupo de idade */}
       <View style={styles.ageGroupContainer}>
-        {ageGroups.map(group => (
+        {ageGroups.map((group) => (
           <TouchableOpacity
             key={group}
             style={[
@@ -94,42 +108,34 @@ export default function CheckInScreen() {
                 ageGroup === group && styles.ageGroupTextSelected,
               ]}
             >
-              {group}
+              {getAgeGroupLabel(group)}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Botão para adicionar acompanhante */}
-      <TouchableOpacity style={styles.addButton} onPress={handleAddCompanion}>
-        <Text style={styles.buttonText}>Add Person</Text>
-      </TouchableOpacity>
+      <CheckInButton title="Adicionar Pessoa" onPress={handleAddCompanion} />
 
-      {/* Lista de acompanhantes adicionados */}
       <FlatList
         data={companions}
         keyExtractor={(_, i) => i.toString()}
         renderItem={({ item, index }) => (
           <View style={styles.personRow}>
-            <Text>{item.name} ({item.ageGroup})</Text>
+            <Text>{item.name} ({getAgeGroupLabel(item.ageGroup)})</Text>
             <TouchableOpacity onPress={() => handleRemove(index)}>
-              <Text style={{ color: colors.alert }}>Remove</Text>
+              <Text style={{ color: colors.alert }}>Remover</Text>
             </TouchableOpacity>
           </View>
         )}
-        ListEmptyComponent={<Text style={styles.empty}>No one added yet.</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>{messages.noCompanions}</Text>}
         style={{ marginTop: 24 }}
       />
 
-      {/* Botão para enviar o check-in */}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit Check-In</Text>
-      </TouchableOpacity>
+      <CheckInButton title="Enviar Check-In" onPress={handleSubmit} />
     </View>
   );
 }
 
-// Estilos da tela
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -158,7 +164,7 @@ const styles = StyleSheet.create({
   },
   ageGroupContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginBottom: 16,
   },
   ageGroupButton: {
@@ -166,6 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.inputBorder,
+    marginHorizontal: 6,
   },
   ageGroupSelected: {
     backgroundColor: colors.primary,
@@ -176,25 +183,6 @@ const styles = StyleSheet.create({
   ageGroupTextSelected: {
     color: '#fff',
     fontWeight: 'bold',
-  },
-  addButton: {
-    backgroundColor: colors.primary,
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  submitButton: {
-    backgroundColor: colors.button,
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 32,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
   personRow: {
     flexDirection: 'row',
@@ -209,3 +197,5 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 });
+
+

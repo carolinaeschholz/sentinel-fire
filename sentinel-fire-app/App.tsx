@@ -1,11 +1,15 @@
 import React from 'react';
-import AppNavigator from './navigation';
+import RootNavigator from './navigation/RootNavigator';
 import { CheckInProvider } from './context/CheckInContext';
+import { RiskProvider } from './context/RiskContext';
 
 export default function App() {
   return (
     <CheckInProvider>
-      <AppNavigator />
+      <RiskProvider>
+        <RootNavigator />
+      </RiskProvider>
     </CheckInProvider>
   );
 }
+

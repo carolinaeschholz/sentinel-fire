@@ -1,27 +1,35 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode } from 'react';
+import { RiskLevel } from '../constants/riskLevels';
 
-export interface RiskZone {
+export type RiskZone = {
   id: string;
   coordinates: { latitude: number; longitude: number }[];
-  level: 'low' | 'medium' | 'high';
-}
+  level: RiskLevel;
+};
 
-interface RiskContextType {
-  zones: RiskZone[];
-  setZones: (zones: RiskZone[]) => void;
-}
+type RiskContextType = {
+  riskLevel: RiskLevel;
+  setRiskLevel: (level: RiskLevel) => void;
+  riskZones: RiskZone[];
+  setRiskZones: (zones: RiskZone[]) => void;
+};
 
-export const RiskContext = createContext<RiskContextType>({
-  zones: [],
-  setZones: () => {},
-});
+export const RiskContext = createContext<RiskContextType | undefined>(undefined);
 
 export function RiskProvider({ children }: { children: ReactNode }) {
-  const [zones, setZones] = useState<RiskZone[]>([]);
+  const [riskLevel, setRiskLevel] = useState<RiskLevel>('sem_risco');
+  const [riskZones, setRiskZones] = useState<RiskZone[]>([]);
 
   return (
-    <RiskContext.Provider value={{ zones, setZones }}>
+    <RiskContext.Provider value={{ riskLevel, setRiskLevel, riskZones, setRiskZones }}>
       {children}
     </RiskContext.Provider>
   );
 }
+
+export function useRiskContext() {
+  const context = useContext(RiskContext);
+  if (!context) throw new Error('useRiskContext must be used inside RiskProvider');
+  return context;
+}
+

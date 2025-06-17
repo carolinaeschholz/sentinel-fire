@@ -2,12 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import colors from '../constants/colors';
 
-interface Props {
-  title: string;
-  onPress: () => void;
-}
-
-export default function CheckInButton({ title, onPress }: Props) {
+export default function CheckInButton({ onPress, title }: { onPress: () => void; title: string }) {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <Text style={styles.text}>{title}</Text>
@@ -18,10 +13,10 @@ export default function CheckInButton({ title, onPress }: Props) {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.button,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    padding: 16,
+    borderRadius: 12,
     alignItems: 'center',
+    marginTop: 16,
   },
   text: {
     color: colors.buttonText,
