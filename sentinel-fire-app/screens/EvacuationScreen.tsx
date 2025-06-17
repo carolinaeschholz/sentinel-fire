@@ -1,7 +1,7 @@
-// screens/EvacuationScreen.tsx
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
+import Constants from 'expo-constants';
 import colors from '../constants/colors';
 
 export default function EvacuationScreen() {
@@ -15,8 +15,8 @@ export default function EvacuationScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Mapa exibindo a rota de evacuação */}
       <MapView
+        provider="google" // força o uso do Google Maps
         style={styles.map}
         initialRegion={{
           latitude: -23.561,
@@ -25,20 +25,17 @@ export default function EvacuationScreen() {
           longitudeDelta: 0.01,
         }}
       >
-        {/* Linha representando a rota */}
         <Polyline
           coordinates={routeCoordinates}
           strokeColor={colors.primary}
           strokeWidth={5}
         />
 
-        {/* Marcador do ponto inicial */}
         <Marker
           coordinate={routeCoordinates[0]}
           title="Start"
           description="You are here"
         />
-        {/* Marcador do ponto final (zona segura) */}
         <Marker
           coordinate={routeCoordinates[routeCoordinates.length - 1]}
           title="Safe Zone"
@@ -58,3 +55,4 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
+

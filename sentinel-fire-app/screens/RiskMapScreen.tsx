@@ -1,11 +1,9 @@
-// screens/RiskMapScreen.tsx
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
-import MapView, { Polygon } from 'react-native-maps';
+import MapView, { Polygon, PROVIDER_GOOGLE } from 'react-native-maps';
 import colors from '../constants/colors';
 
 export default function RiskMapScreen() {
-  // Mock de zonas de risco para exibição no mapa
   const mockRiskZones = [
     {
       id: 'zone1',
@@ -21,8 +19,8 @@ export default function RiskMapScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Mapa exibindo as zonas de risco */}
       <MapView
+        provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
           latitude: -23.561,
@@ -31,23 +29,20 @@ export default function RiskMapScreen() {
           longitudeDelta: 0.01,
         }}
       >
-        {/* Desenha cada zona de risco como um polígono no mapa */}
         {mockRiskZones.map((zone) => (
-          <React.Fragment key={zone.id}>
-            <Polygon
-              coordinates={zone.coordinates}
-              strokeColor={colors.alert}
-              fillColor="rgba(192, 57, 43, 0.4)"
-              strokeWidth={2}
-            />
-          </React.Fragment>
+          <Polygon
+            key={zone.id}
+            coordinates={zone.coordinates}
+            strokeColor={colors.alert}
+            fillColor="rgba(192, 57, 43, 0.4)"
+            strokeWidth={2}
+          />
         ))}
       </MapView>
     </View>
   );
 }
 
-// Estilos da tela
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -1,0 +1,31 @@
+{
+  "cli": {
+    "version": ">= 3.13.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_ANDROID_GRADLE_WRAPPER_VERSION": "8.5"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_ANDROID_GRADLE_WRAPPER_VERSION": "8.5"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_ANDROID_GRADLE_WRAPPER_VERSION": "8.5"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
+
