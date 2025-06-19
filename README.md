@@ -42,8 +42,8 @@ It connects satellite and climate data with real-time input from the population 
 ## 📄 License
 This project is licensed under the MIT License.  
 You can view it here: [LICENSE](https://github.com/carolinaeschholz/sentinel-fire/blob/main/LICENSE)
-=======
-<!--
+
+
 Sugestão de versão do README pela Ana (nova estrutura)
 Use essa versão se quiser um passo a passo mais claro para rodar o projeto localmente.# Sentinel Fire — Monitoramento Inteligente de Risco de Incêndio Florestal
 
@@ -147,4 +147,3 @@ print("Response JSON:", response.json())
 
 Este projeto foi desenvolvido para fins acadêmicos e demonstração técnica.  
 Dúvidas ou sugestões? Fale com a gente no GitHub ou por e-mail! -->
->>>>>>> eed11a4 (Initial backend setup with FastAPI and risk-check endpoint)
