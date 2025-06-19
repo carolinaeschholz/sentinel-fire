@@ -42,4 +42,4 @@ Desktop.ini
 *.tmp
 *.swp
 
-.venv/
+venv/
